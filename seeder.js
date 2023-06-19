@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const DB_URL = "mongodb://127.0.0.1:27017/mr-fix";
+const DB_URL = "mongodb://127.0.0.1:27017/dr-solar";
 
 // create Admin User Schema For Admin User Model
 
@@ -22,8 +22,8 @@ const admin_user_model = mongoose.model("admin", admin_user_schema);
 const bcrypt = require("bcryptjs");
 
 let userInfo = {
-    email: "mrfix.help@gmail.com",
-    password: "2@mr$FIX023",
+    email: "drsolar.help@gmail.com",
+    password: "2@dr$SOLAR023",
 };
 
 async function create_admin_user_account() {

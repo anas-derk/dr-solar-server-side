@@ -12,8 +12,8 @@ function transporterObj() {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: "mrfix.help@gmail.com",
-            pass: "suwtluglgrxpumsb",
+            user: "drsolar.help@gmail.com",
+            pass: "2@dr$SOLAR023",
         }
     });
     return transporter;
@@ -27,7 +27,7 @@ function sendCodeToUserEmail(email) {
     let generatedCode = generator.generateCodes("###**#");
     // إعداد الرسالة قبل إرسالها
     const mailConfigurations = {
-        from: "mrfix.help@gmail.com",
+        from: "drsolar.help@gmail.com",
         to: email,
         subject: "رسالة التحقق من البريد الالكتروني الخاص بحسابك على موقع مستر فيكس",
         text: `مرحباً بك في خدمة التحقق من أنك صاحب البريد الالكتروني في مستر فيكس \n الكود هو: ${generatedCode}`,
