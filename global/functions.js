@@ -13,7 +13,7 @@ function transporterObj() {
         service: 'gmail',
         auth: {
             user: "drsolar.help@gmail.com",
-            pass: "2@dr$SOLAR023",
+            pass: "ocsumemqqrvtxfuh",
         }
     });
     return transporter;
