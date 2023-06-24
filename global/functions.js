@@ -29,8 +29,8 @@ function sendCodeToUserEmail(email) {
     const mailConfigurations = {
         from: "drsolar.help@gmail.com",
         to: email,
-        subject: "رسالة التحقق من البريد الالكتروني الخاص بحسابك على موقع مستر فيكس",
-        text: `مرحباً بك في خدمة التحقق من أنك صاحب البريد الالكتروني في مستر فيكس \n الكود هو: ${generatedCode}`,
+        subject: "رسالة التحقق من البريد الالكتروني الخاص بحسابك على موقع دكتور سولار",
+        text: `مرحباً بك في خدمة التحقق من أنك صاحب البريد الالكتروني في دكتور سولار \n الكود هو: ${generatedCode}`,
     };
     return new Promise((resolve, reject) => {
         // إرسال رسالة الكود إلى الإيميل
@@ -46,7 +46,7 @@ function sendCodeToUserEmail(email) {
 function sendEmail(data) {
     const fullRequestInfo = data[0];
     const senderRequestInfo = data[1];
-    let text = `- request type: ${fullRequestInfo.requestType}\n- service type: ${fullRequestInfo.serviceType}\n- explain And New Address: ${fullRequestInfo.explainAndNewAddress}\n- preferred Date Of Visit: ${fullRequestInfo.preferredDateOfVisit}\n- preferred Time Of Visit: ${fullRequestInfo.preferredTimeOfVisit}\n- electricity Times: ${fullRequestInfo.electricityTimes}\n- is Alternative Energy Exist: ${fullRequestInfo.isAlternativeEnergyExist}\n ====================\n- first And Last Name: ${senderRequestInfo.firstAndLastName}\n- user email: ${senderRequestInfo.email}\n- mobile phone: ${senderRequestInfo.mobilePhone}\n- gender: ${senderRequestInfo.gender}\n- birthday: ${senderRequestInfo.birthday}\n- city: ${senderRequestInfo.city}\n- address: ${senderRequestInfo.address}`;
+    let text = `- service type: ${fullRequestInfo.serviceType}\n- subType type: ${fullRequestInfo.subType}\n- Address: ${fullRequestInfo.address}\n- preferred Date Of Visit: ${fullRequestInfo.preferredDateOfVisit}\n- preferred Time Of Visit: ${fullRequestInfo.preferredTimeOfVisit}\n- electricity Times: ${fullRequestInfo.electricityTimes}\n- is Wish Renew Subscription: ${fullRequestInfo.isWishRenewSubscription}\n ====================\n- first And Last Name: ${senderRequestInfo.firstAndLastName}\n- user email: ${senderRequestInfo.email}\n- mobile phone: ${senderRequestInfo.mobilePhone}\n- gender: ${senderRequestInfo.gender}\n- birthday: ${senderRequestInfo.birthday}\n- city: ${senderRequestInfo.city}\n- address: ${senderRequestInfo.address}`;
     let attachments = [];
     for (let i = 0; i < fullRequestInfo.files.length; i++) {
         attachments.push({
@@ -56,7 +56,7 @@ function sendEmail(data) {
     // إعداد الرسالة قبل إرسالها
     const mailConfigurations = {
         from: senderRequestInfo.email,
-        to: "mrfix.help@gmail.com",
+        to: "drsolar.help@gmail.com",
         subject: "New Request",
         text,
         attachments,

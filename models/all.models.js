@@ -26,19 +26,19 @@ const userModel = mongoose.model("user", userSchema);
 // تعريف كائن هيكل جدول الطلبات
 
 const requestSchema = new mongoose.Schema({
-    requestType: String,
     serviceType: String,
-    explainAndNewAddress: String,
+    subType: String,
+    address: String,
     preferredDateOfVisit: {
         type: String,
-        default: "فوراً",
+        default: "تحدد من قبل الشركة",
     },
     preferredTimeOfVisit: {
         type: String,
-        default: "فوراً",
+        default: "تحدد من قبل الشركة",
     },
     electricityTimes: String,
-    isAlternativeEnergyExist: String,
+    isWishRenewSubscription: String,
     requestPostDate: {
         type: Date,
         default: Date.now(),
