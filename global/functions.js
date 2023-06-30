@@ -22,9 +22,9 @@ function transporterObj() {
 function sendCodeToUserEmail(email) {
     // استدعاء مكتبة توليد شيفرة خاصة بإعادة ضبط كلمة السر
     let CodeGenerator = require('node-code-generator');
-    let generator = new CodeGenerator();
+    const generator = new CodeGenerator();
     // توليد الكود المراد إرساله إلى الإيميل وفق نمط محدد
-    let generatedCode = generator.generateCodes("###**#");
+    const generatedCode = generator.generateCodes("###**#");
     // إعداد الرسالة قبل إرسالها
     const mailConfigurations = {
         from: "drsolar.help@gmail.com",
@@ -46,7 +46,7 @@ function sendCodeToUserEmail(email) {
 function sendEmail(data) {
     const fullRequestInfo = data[0];
     const senderRequestInfo = data[1];
-    let text = `- service type: ${fullRequestInfo.serviceType}\n- subType type: ${fullRequestInfo.subType}\n- Address: ${fullRequestInfo.address}\n- preferred Date Of Visit: ${fullRequestInfo.preferredDateOfVisit}\n- preferred Time Of Visit: ${fullRequestInfo.preferredTimeOfVisit}\n- electricity Times: ${fullRequestInfo.electricityTimes}\n- is Wish Renew Subscription: ${fullRequestInfo.isWishRenewSubscription}\n ====================\n- first And Last Name: ${senderRequestInfo.firstAndLastName}\n- user email: ${senderRequestInfo.email}\n- mobile phone: ${senderRequestInfo.mobilePhone}\n- gender: ${senderRequestInfo.gender}\n- birthday: ${senderRequestInfo.birthday}\n- city: ${senderRequestInfo.city}\n- address: ${senderRequestInfo.address}`;
+    const text = `- service type: ${fullRequestInfo.serviceType}\n- subType type: ${fullRequestInfo.subType}\n- Address: ${fullRequestInfo.address}\n- preferred Date Of Visit: ${fullRequestInfo.preferredDateOfVisit}\n- preferred Time Of Visit: ${fullRequestInfo.preferredTimeOfVisit}\n- electricity Times: ${fullRequestInfo.electricityTimes}\n- is Wish Renew Subscription: ${fullRequestInfo.isWishRenewSubscription}\n ====================\n- first And Last Name: ${senderRequestInfo.firstAndLastName}\n- user email: ${senderRequestInfo.email}\n- mobile phone: ${senderRequestInfo.mobilePhone}\n- gender: ${senderRequestInfo.gender}\n- birthday: ${senderRequestInfo.birthday}\n- city: ${senderRequestInfo.city}\n- address: ${senderRequestInfo.address}`;
     let attachments = [];
     for (let i = 0; i < fullRequestInfo.files.length; i++) {
         attachments.push({
