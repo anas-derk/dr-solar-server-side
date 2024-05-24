@@ -1,47 +1,74 @@
-function postServiceRequest(req, res) {
-    // تعريف مصفوفة صور الطلب 
-    let requestImages = [];
-    // عمل حلقة تكرارية لإضافة كل مسارات الصور التي تمّ رفعها إليها
-    for(let file of req.files) {
-        requestImages.push(file.path);
-    }
-    // تجميع بيانات الطلب بحيث يتم وضع بيانات الطلب مع مسارات الملفات ضمن كائن واحد مع مراعاة أن يكون ليس هنالك صور قد تمّ رفعها
-    let requestInfo = {
-        ...Object.assign({}, req.body),
-        files: requestImages,
-    };
-    // إنشاء طلب جديد
-    const { createNewRequest } = require("../models/requests.model");
-    createNewRequest(requestInfo).then((result) => {
-        // في حالة نجاح عملية إنشاء الطلب عندها نرسل إيميل للمسؤول
-        res.json("تمّ طلب الخدمة بنجاح ، سوف يتم التواصل معك قريباً جداً");
-        const { sendEmail } = require("../global/functions");
-        sendEmail(result);
-    })
-    .catch((err) => {
-        // في حالة حدث خطأ أثناء العملية عندها نحذف الملفات التي تمّ رفعها لكي لا يتم إستهلاك المساحة التخزينية للسيرفر
-        const { unlinkSync } = require("fs");
-        for (let file of requestImages.files) {
-            unlinkSync(file.path);
+const { getResponseObject } = require("../global/functions");
+
+const requestsOPerationsManagmentFunctions = require("../models/requests.model");
+
+const { sendEmail } = require("../global/functions");
+
+async function postServiceRequest(req, res) {
+    try{
+        const uploadError = req.uploadError;
+        if (uploadError) {
+            res.status(400).json(getResponseObject(uploadError, true, {}));
+            return;
         }
-        console.log(err);
-        // إعادة رسالة الخطأ للمستخدم
-        res.json(err);
-    });
+        // تعريف مصفوفة صور الطلب 
+        let requestImages = [];
+        // عمل حلقة تكرارية لإضافة كل مسارات الصور التي تمّ رفعها إليها
+        for(let file of req.files) {
+            requestImages.push(file.path);
+        }
+        // إنشاء طلب جديد
+        const result = await requestsOPerationsManagmentFunctions.createNewRequest(req.data._id, {
+            ...Object.assign({}, req.body),
+            files: requestImages,
+        });
+        res.json({
+            msg: "تمّ طلب الخدمة بنجاح ، سوف يتم التواصل معك قريباً جداً",
+            error: false,
+            data: {},
+        });
+        // في حالة نجاح عملية إنشاء الطلب عندها نرسل إيميل للمسؤول
+        sendEmail(result.data);
+    }
+    catch(err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
 }
 
-function getAllRequests(req, res) {
-    // جلب كل الطلبات
-    const { getAllRequests } = require("../models/requests.model");
-    getAllRequests().then((result) => {
-        // إعادة النتيجة للمستخدم كاستجابة من السيرفر
-        res.json(result);
-    })
-    .catch((err) => res.json(err));
+async function getRequestsCount(req, res) {
+    try {
+        res.json(await requestsOPerationsManagmentFunctions.getRequestsCount());
+    }
+    catch (err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
+}
+
+async function getAllRequestsInsideThePage(req, res) {
+    try{
+        const filters = req.query;
+        res.json(await requestsOPerationsManagmentFunctions.getAllRequestsInsideThePage(filters.pageNumber, filters.pageSize));
+    }
+    catch(err) {
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
+}
+
+async function getRequestSenderInfo(req, res) {
+    try{
+        // جلب معلومات الطلب
+        const requestAndUserIds = req.query;
+        res.json(await requestsOPerationsManagmentFunctions.getRequestSenderInfo(req.data._id, requestAndUserIds.requestId, requestAndUserIds.userId))
+    }
+    catch(err){
+        res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
+    }
 }
 
 // تصدير الدوال المعرّفة
 module.exports = {
     postServiceRequest,
-    getAllRequests,
+    getRequestsCount,
+    getAllRequestsInsideThePage,
+    getRequestSenderInfo
 }

@@ -1,57 +1,91 @@
 // استيراد كائن ال mongoose + requestModel
 
-const { mongoose, requestModel } = require("./all.models");
+const { requestModel, userModel, adminModel } = require("./all.models");
 
-// استيراد الملف الذي يحتوي على رابط قاعدة البيانات
-
-const DB_URL = require("../global/DB_URL");
-
-async function createNewRequest(requestInfo) {
+async function createNewRequest(userId, requestInfo) {
     try {
-        // الاتصال بقاعدة البيانات
-        await mongoose.connect(DB_URL);
         // إنشاء طلب جديد وحفظه في قاعدة البيانات ضمن جدول الطلبات
-        const newRequest = new requestModel(requestInfo);
+        const newRequest = new requestModel({
+            ...requestInfo,
+            userId
+        });
         // الاحتفاظ بمعلومات الطلب كاملة للاستفادة منها لاحقاً في إرسالها كرسالة على إيميل المسؤول
         const fullRequestInfo = await newRequest.save();
         // البحث في جدول المستخدمين عن المستخدم الذي أرسل الطلب
-        const requestSenderInfo = await mongoose.models.user.findById(requestInfo.userId);
-        // قطع الاتصال بقاعدة البيانات
-        await mongoose.disconnect();
+        const requestSenderInfo = await userModel.findById(userId);
         // تجميع بيانات الطلب + بيانات مرسل الطلب ضمن مصفوفة للاستفادة منها لاحقاً كما ذكرت
-        return [fullRequestInfo, requestSenderInfo];
+        return {
+            msg: "عملية إنشاء طلب جديد تمت بنجاح !!",
+            error: false,
+            data: [fullRequestInfo, requestSenderInfo]
+        }
     }
     catch (err) {
-        // في حالة حدث خطأ أثناء العملية ، نقطع الاتصال ونرمي استثناء بالخطأ
-        await mongoose.disconnect();
-        throw Error("عذراً حدث خطأ ، الرجاء إعادة العملية");
+        // في حالة حدث خطأ أثناء العملية ، نرمي استثناء بالخطأ
+        throw Error(err);
     }
 }
 
-async function getAllRequests() {
+async function getRequestsCount() {
     try {
-        // الاتصال بقاعدة البيانات
-        await mongoose.connect(DB_URL);
-        // جلب كل بيانات الطلبات من جدول الطلبات مع ترتيبها تنازلياً
-        const requests = await requestModel.find({}).sort({ requestPostDate: -1 });
-        if (requests) {
-            // إذا كان يوجد طلبات بالتالي إعادتها للمستخدم وقطع الاتصال بقاعدة البيانات
-            await mongoose.disconnect();
-            return requests;
-        } else {
-            // في حالة لم يكن هنالك طلبات ، بالتالي إعادة رسالة خطأ للمستخدم
-            await mongoose.disconnect();
-            return "عذراً لا توجد أي طلبات حالياً";
+        return {
+            msg: "عملية جلب عدد الطلبات تمت بنجاح !!",
+            error: false,
+            data: await requestModel.countDocuments({}),
         }
     } catch (err) {
-        // في حالة حدث خطأ أثناء العملية ، نقطع الاتصال ونرمي استثناء بالخطأ
-        await mongoose.disconnect();
-        throw Error("عذراً يوجد مشكلة ، الرجاء إعادة المحاولة !!");
+        throw Error(err);
+    }
+}
+
+async function getAllRequestsInsideThePage(pageNumber, pageSize) {
+    try {
+        return {
+            msg: `عملية جلب كل الطلبات في الصفحة : ${pageNumber} تمت بنجاح !!`,
+            error: false,
+            data: await requestModel.find({}).skip((pageNumber - 1) * pageSize).limit(pageSize).sort({ adsPostDate: -1 }),
+        }
+    } catch (err) {
+        throw Error(err);
+    }
+}
+
+async function getRequestSenderInfo(adminId, requestId, userId) {
+    try {
+        const admin = await adminModel.findById(adminId);
+        if (admin) {
+            // التحقق من أنّ الطلب موجود عن طريق البحث في جدول الطلبات عن رقم معرّف موجود مسبقاً
+            const request = await requestModel.findById(requestId);
+            // في حالة لم يكن هنالك طلب سابق عندها نرجع رسالة خطأ
+            if (!request) {
+                return {
+                    msg: "عذراً ، لا يوجد طلب بهذا المعرّف !!",
+                    error: true,
+                    data: {}
+                }
+            }
+            // في حالة كان يوجد طلب بهذا المعرّف فأننا نبحث عن مستخدم في جدول المستخدمين له معرّف مطابق للرقم المُرسل
+            return {
+                msg: "عملية جلب معلومات مرسل الطلب تمت بنجاح !!",
+                error: false,
+                data: await userModel.findById(userId)
+            }
+        }
+        return {
+            msg: "عذراً ، حساب المسؤول غير موجود",
+            error: true,
+            data: {}
+        }
+    } catch (err) {
+        // في حالة حدث خطأ أثناء العملية ، نرمي استثناء بالخطأ
+        throw Error(err);
     }
 }
 
 // تصدير الدوال المعرّفة سابقاً وكائن الطلب
 module.exports = {
     createNewRequest,
-    getAllRequests,
+    getRequestsCount,
+    getAllRequestsInsideThePage,
+    getRequestSenderInfo
 }

@@ -5,14 +5,43 @@ const mongoose = require("mongoose");
 // تعريف كائن هيكل جدول المستخدمين
 
 const userSchema = new mongoose.Schema({
-    firstAndLastName: String,
+    firstAndLastName: {
+        type: String,
+        required: true,
+    },
     email: String,
-    mobilePhone: String,
-    password: String,
-    gender: String,
-    birthday: String,
-    city: String,
-    address: String,
+    mobilePhone: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    gender: {
+        type: String,
+        required: true,
+        enum: [
+            "male",
+            "female"
+        ],
+    },
+    birthday: {
+        type: String,
+        required: true,
+    },
+    city: {
+        type: String,
+        required: true,
+        enum: [
+            "damascus",
+            "rif-damascus"
+        ],
+    },
+    address: {
+        type: String,
+        required: true,
+    },
     userType: {
         type: String,
         default: "user",
@@ -26,9 +55,29 @@ const userModel = mongoose.model("user", userSchema);
 // تعريف كائن هيكل جدول الطلبات
 
 const requestSchema = new mongoose.Schema({
-    serviceType: String,
-    subType: String,
-    address: String,
+    serviceType: {
+        type: String,
+        required: true,
+        enum: [
+            "طلب فحص",
+            "طلب تنظيف"
+        ],
+    },
+    subType: {
+        type: String,
+        required: true,
+        enum: [
+            "أسبوعي",
+            "شهري",
+            "ربع سنوي",
+            "نصف سنوي",
+            "سنوي"
+        ],
+    },
+    address: {
+        type: String,
+        required: true,
+    },
     preferredDateOfVisit: {
         type: String,
         default: "تحدد من قبل الشركة",
@@ -37,13 +86,22 @@ const requestSchema = new mongoose.Schema({
         type: String,
         default: "تحدد من قبل الشركة",
     },
-    electricityTimes: String,
-    isWishRenewSubscription: String,
+    electricityTimes: {
+        type: String,
+        required: true,
+    },
+    isWishRenewSubscription: {
+        type: String,
+        required: true,
+    },
     requestPostDate: {
         type: Date,
         default: Date.now(),
     },
-    userId: String,
+    userId: {
+        type: String,
+        required: true,
+    },
     files: Array,
 });
 
@@ -54,8 +112,14 @@ const requestModel = mongoose.model("request", requestSchema);
 // إنشاء كائن هيكل جدول المسؤولين
 
 const adminSchema = new mongoose.Schema({
-    email: String,
-    password: String,
+    email: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
     userType: {
         type: String,
         default: "admin",
@@ -69,7 +133,10 @@ const adminModel = mongoose.model("admin", adminSchema);
 // إنشاء كائن هيكل جدول الإعلانات
 
 const adsSchema = new mongoose.Schema({
-    content: String,
+    content: {
+        type: String,
+        required: true,
+    },
     adsPostDate: {
         type: Date,
         default: Date.now(),
@@ -80,10 +147,49 @@ const adsSchema = new mongoose.Schema({
 
 const adsModel = mongoose.model("ad", adsSchema);
 
+// إنشاء كائن هيكل جدول رموز التحقق للمستخدمين
+
+const accountVerificationCodesShema = mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+    },
+    code: {
+        type: String,
+        required: true,
+    },
+    createdDate: Date,
+    expirationDate: {
+        type: Date,
+        required: true,
+    },
+    requestTimeCount: {
+        type: Number,
+        default: 1,
+    },
+    isBlockingFromReceiveTheCode: {
+        type: Boolean,
+        default: false,
+    },
+    receiveBlockingExpirationDate: Date,
+    typeOfUse: {
+        type: String,
+        default: "to activate account",
+        enum: [
+            "to activate account",
+            "to reset password",
+        ],
+    }
+});
+
+// إنشاء كائن  جدول رموز التحقق للمستخدمين
+
+const accountVerificationCodesModel = mongoose.model("account_verification_codes", accountVerificationCodesShema);
+
 module.exports = {
-    mongoose,
     userModel,
     requestModel,
     adminModel,
     adsModel,
+    accountVerificationCodesModel
 }
