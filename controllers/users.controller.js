@@ -39,6 +39,7 @@ async function getForgetPassword(req, res) {
         res.json(result);
     }
     catch(err) {
+        console.log(err)
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));
     }
 }
@@ -82,7 +83,7 @@ async function getUserInfo(req, res) {
 
 async function putProfile(req, res) {
     try{
-        res.json(await usersOPerationsManagmentFunctions.updateProfile(req.data._id, req.body, req.query.isSameOfEmail, req.query.isSameOfEmail, req.query.isSameOfMobilePhone));
+        res.json(await usersOPerationsManagmentFunctions.updateProfile(req.data._id, req.body, req.query.isSameOfEmail, req.query.isSameOfMobilePhone));
     }
     catch(err) {
         res.status(500).json(getResponseObject("Internal Server Error !!", true, {}));

@@ -17,14 +17,13 @@ requestsRouter.post("/create-new-request",
             files: req.files,
         };
         validateIsExistValueForFieldsAndDataTypes([
-            { fieldName: "Request Type", fieldValue: requestInfo.requestType, dataType: "string", isRequiredValue: true },
             { fieldName: "Service Type", fieldValue: requestInfo.serviceType, dataType: "string", isRequiredValue: true },
-            { fieldName: "Explain And New Address", fieldValue: requestInfo.explainAndNewAddress, dataType: "string", isRequiredValue: true },
+            { fieldName: "Subscription Type", fieldValue: requestInfo.subType, dataType: "string", isRequiredValue: true },
+            { fieldName: "Address", fieldValue: requestInfo.address, dataType: "string", isRequiredValue: true },
             { fieldName: "Preferred Date Of Visit", fieldValue: requestInfo.preferredDateOfVisit, dataType: "string", isRequiredValue: true },
             { fieldName: "Preferred Time Of Visit", fieldValue: requestInfo.preferredTimeOfVisit, dataType: "string", isRequiredValue: false },
-            { fieldName: "Preferred Time Of Visit", fieldValue: requestInfo.preferredTimeOfVisit, dataType: "string", isRequiredValue: false },
             { fieldName: "Electricity Times", fieldValue: requestInfo.electricityTimes, dataType: "string", isRequiredValue: true },
-            { fieldName: "Is Alternative Energy Exist", fieldValue: requestInfo.isAlternativeEnergyExist, dataType: "string", isRequiredValue: true },
+            { fieldName: "Is Wish Renew Subscription", fieldValue: requestInfo.isWishRenewSubscription, dataType: "string", isRequiredValue: true },
         ], res, next);
     },
     requestsController.postServiceRequest
